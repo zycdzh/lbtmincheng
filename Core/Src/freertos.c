@@ -25,17 +25,22 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+extern void chassis_task(void *argument);
+extern void gimbal_task(void *argument);
+extern void friction_task(void *argument);
+extern void referee_usart_task(void *argument);
+extern void detect_task(void *argument);
+extern void servo_task(void *argument);
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
- TaskHandle_t   chassis_Handle;
- TaskHandle_t   gimbal_Handle;
- TaskHandle_t   friction_Handle;
- TaskHandle_t 	referee_usart_Handle;
- TaskHandle_t detect_task_Handle ;
- TaskHandle_t servo_task_Handle ;
+TaskHandle_t   chassis_Handle;
+TaskHandle_t   gimbal_Handle;
+TaskHandle_t   friction_Handle;
+TaskHandle_t   referee_usart_Handle;
+TaskHandle_t   detect_task_Handle;
+TaskHandle_t   servo_task_Handle;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -63,8 +68,6 @@ const osThreadAttr_t defaultTask_attributes = {
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 
-/* USER CODE END FunctionPrototypes */
-
 void StartDefaultTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -80,100 +83,102 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
+  /* 创建互斥锁，... */
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
+  /* 创建信号量，... */
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
+  /* 启动定时器，... */
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
+  /* 创建队列，... */
   /* USER CODE END RTOS_QUEUES */
 
-  /* Create the thread(s) */
-  /* creation of defaultTask */
+  /* 创建默认任务 */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-/*��������*/
-			xTaskCreate(
-			 chassis_task, // ����ָ��
-			"chassis", // ��������
-			512, // ջ��С����λΪword
-			 NULL, // �������
-			osPriorityNormal1, // ���ȼ���ԽСԽ�Ń�
-			&chassis_Handle); // ���
-/*��̨����*/
-			xTaskCreate(
-			 gimbal_task, // ����ָ��
-			"gimbal_task", // ��������
-			256, // ջ��С����λΪword
-			 NULL, // �������
-			osPriorityNormal1, // ���ȼ���ԽСԽ�Ń�
-			&gimbal_Handle); // ���
-/*��������*/
-			xTaskCreate(
-			 friction_task, // ����ָ��
-			"friction_task", // ��������
-			128, // ջ��С����λΪword
-			 NULL, // �������
-			osPriorityNormal2, // ���ȼ���ԽСԽ�Ń�
-			&friction_Handle); // ���     
-/*����ϵͳ����*/
-			xTaskCreate(
-			 referee_usart_task, // ����ָ��
-			"referee_usart_task", // ��������
-			256, // ջ��С����λΪword
-			 NULL, // �������
-			osPriorityNormal1, // ���ȼ���ԽСԽ�Ń�
-			&referee_usart_Handle); // ���
-/*���߼������*/
-			xTaskCreate(
-			 detect_task, // ����ָ��
-			"detect_task", // ��������
-			256, // ջ��С����λΪword
-			 NULL, // �������
-			osPriorityNormal1, // ���ȼ���ԽСԽ�Ń�
-			&detect_task_Handle); // ���
-
-/*�������*/
-			xTaskCreate(
-			 servo_task, // ����ָ��
-			"servo_task", // ��������
-			256, // ջ��С����λΪword
-			 NULL, // �������
-			osPriorityNormal1, // ���ȼ���ԽСԽ�Ń�
-			&servo_task_Handle); // ���
+  /* 在此处添加线程，... */
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
+  /* 添加事件，... */
   /* USER CODE END RTOS_EVENTS */
 
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */
 /**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
+  * @brief  默认任务入口，在此创建所有应用任务后删除自身
+  * @param  argument: 未使用
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  /* Infinite loop */
-  for(;;)
-  {
-		
-    osDelay(1);
-  }
+
+  /* 创建底盘任务 - 电机控制，优先级高于普通 */
+  xTaskCreate(
+      chassis_task,           // 任务函数
+      "chassis",              // 任务名称
+      512,                    // 堆栈大小（单位：word）
+      NULL,                   // 参数
+      osPriorityNormal1,      // 优先级
+      &chassis_Handle);       // 任务句柄
+
+  /* 创建云台任务 - 俯仰和偏航控制，最高优先级 */
+  xTaskCreate(
+      gimbal_task,            // 任务函数
+      "gimbal_task",          // 任务名称
+      512,                    // 堆栈大小
+      NULL,                   // 参数
+      osPriorityNormal3,      // 优先级 - 最高，实时控制
+      &gimbal_Handle);        // 任务句柄
+
+  /* 创建摩擦轮任务 - 发射控制 */
+  xTaskCreate(
+      friction_task,          // 任务函数
+      "friction_task",       // 任务名称
+      256,                    // 堆栈大小
+      NULL,                   // 参数
+      osPriorityNormal2,      // 优先级 - 高，时序要求
+      &friction_Handle);     // 任务句柄
+
+  /* 创建裁判系统通信任务 */
+  xTaskCreate(
+      referee_usart_task,    // 任务函数
+      "referee_usart_task",  // 任务名称
+      256,                    // 堆栈大小
+      NULL,                   // 参数
+      osPriorityNormal1,      // 优先级
+      &referee_usart_Handle); // 任务句柄
+
+  /* 创建错误检测任务 */
+  xTaskCreate(
+      detect_task,           // 任务函数
+      "detect_task",         // 任务名称
+      256,                   // 堆栈大小
+      NULL,                  // 参数
+      osPriorityNormal,      // 优先级 - 最低，仅监控
+      &detect_task_Handle);  // 任务句柄
+
+  /* 创建舵机任务 */
+  xTaskCreate(
+      servo_task,            // 任务函数
+      "servo_task",          // 任务名称
+      256,                   // 堆栈大小
+      NULL,                  // 参数
+      osPriorityNormal1,      // 优先级
+      &servo_task_Handle);   // 任务句柄
+
+  /* 创建完所有任务后删除自身 */
+  vTaskDelete(NULL);
+
   /* USER CODE END StartDefaultTask */
 }
 
@@ -181,4 +186,3 @@ void StartDefaultTask(void *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-
