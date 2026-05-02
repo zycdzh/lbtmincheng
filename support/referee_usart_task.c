@@ -37,6 +37,7 @@ int test_d = 0;
   * @retval         none
   */
 extern void referee_unpack_fifo_data(void);
+
  
 extern UART_HandleTypeDef huart6;
 

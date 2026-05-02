@@ -1,7 +1,7 @@
 /**
   ****************************(C) COPYRIGHT 2019 DJI****************************
   * @file       referee_usart_task.c/h
-  * @brief      RM referee system data solve. RMï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
+  * @brief      RM referee system data solve. RM²ÃÅÐÏµÍ³Êý¾Ý´¦Àí
   * @note       
   * @history
   *  Version    Date            Author          Modification
@@ -27,10 +27,11 @@
   * @retval         none
   */
 /**
-  * @brief          ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½
+  * @brief          ²ÃÅÐÏµÍ³ÈÎÎñ
   * @param[in]      pvParameters: NULL
   * @retval         none
   */
 extern void referee_usart_task(void *argument);
+extern void referee_unpack_fifo_data(void);
 
 #endif

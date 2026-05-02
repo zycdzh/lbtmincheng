@@ -3,10 +3,6 @@
 
 #include "struct_typedef.h"
 
-#ifndef __packed
-#define __packed __attribute__((packed))
-#endif
-
 #define HEADER_SOF 0xA5
 #define REF_PROTOCOL_FRAME_MAX_SIZE         128
 
