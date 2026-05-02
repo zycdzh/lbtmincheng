@@ -57,7 +57,7 @@ uint32_t Time_Base;
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
-unsigned int i; 
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

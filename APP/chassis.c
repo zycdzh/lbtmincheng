@@ -2,13 +2,13 @@
 #include "main.h"
 #include "pid.h"
 
-// È«¾Ö±äÁ¿£ºËÙ¶ÈºÍÆ«º½½Ç
+// È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶Èºï¿½Æ«ï¿½ï¿½ï¿½ï¿½
 fp32 vy;
 fp32 vx; 
 int16_t yaw_angle;
 
-//extern PidTypeDef fallow_angle_pid;  // 6020 ½Ç¶È¸úËæPID
-//extern PidTypeDef fallow_speed_pid;	// 6020 ËÙ¶È¸úËæPID	
+//extern PidTypeDef fallow_angle_pid;  // 6020 ï¿½Ç¶È¸ï¿½ï¿½ï¿½PID
+//extern PidTypeDef fallow_speed_pid;	// 6020 ï¿½Ù¶È¸ï¿½ï¿½ï¿½PID	
 
 fp32 vy1;
 fp32 vx1;
@@ -16,7 +16,7 @@ fp32 vx1;
 fp32 vy2;
 fp32 vx2;
 
-fp32 v1;			// PID´¦ÀíºóµÄËÄÂÖËÙ¶È
+fp32 v1;			// PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
 fp32 v2;
 fp32 v3;
 fp32 v4;
@@ -25,14 +25,14 @@ float Klimit = 1;
 float Plimit = 0;
 double Scaling1, Scaling2, Scaling3, Scaling4;
 
-// ¹¦ÂÊ¿ØÖÆÏà¹Ø±äÁ¿
+// ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½
 double Chassis_pidout;
 float Chassis_pidout_max;
 
 fp32 Power;
 fp32 Power_Buffer;
 
-fp32 power_v1;			// ËÄÂÖµÄ¹¦ÂÊ¿ØÖÆ
+fp32 power_v1;			// ï¿½ï¿½ï¿½ÖµÄ¹ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½
 fp32 power_v2;
 fp32 power_v3;
 fp32 power_v4;
@@ -48,7 +48,7 @@ fp32 A6020_angle;
 fp32 A6020_speed;
 fp32 A6020_M1;
 
-chassis_mode_e chassis_mode = CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW; // Ä¬ÈÏÄ£Ê½
+chassis_mode_e chassis_mode = CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW; // Ä¬ï¿½ï¿½Ä£Ê½
 
 const RC_ctrl_t *RC; 
 const motor_system_t *c;
@@ -67,39 +67,39 @@ void ChassisController(void) ;
 
 void chassis_task(void *argument)
 {
-    c = get_motor_control_point();   // »ñÈ¡µç»ú¿ØÖÆµã
+    c = get_motor_control_point();   // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½
     RC = get_remote_control_point();
     imu = gyroscope_control_point();
   
     while (1)
     {
-        // ÉèÖÃµ×ÅÌÄ£Ê½ºÍ¿ØÖÆ
+        // ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ä£Ê½ï¿½Í¿ï¿½ï¿½ï¿½
         chassis_set_mode(&chassis_mode);
         chassis_set_control();
         chassis_set_v();
 				ChassisController();
 
-//        // ¼ì²éÒ£¿ØÆ÷ÊÇ·ñ°´ÏÂÌØ¶¨°´Å¥
+//        // ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½Å¥
 			
         if (toe_is_error(DBUS_TOE))
         {
-            CAN_cmd_chassis(0, 0, 0, 0);  // Èç¹û°´ÏÂ°´Å¥£¬Í£Ö¹µç»ú
+            CAN_cmd_chassis(0, 0, 0, 0);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â°ï¿½Å¥ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½
         }
         else
         {
            CAN_cmd_chassis(chassisparam.LefUpFinalOutValue,
 														chassisparam.RigUpFinalOutValue,
 														chassisparam.LefDoFinalOutValue,
-														chassisparam.RigDoFinalOutValue);  // Ïòµç»ú·¢ËÍ¼ÆËãºóµÄËÙ¶È
+														chassisparam.RigDoFinalOutValue);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
         }
         
-        osDelay(2);  // ÑÓÊ±£¬±ÜÃâ¹ýÔØ
+        osDelay(2);  // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 }
 
 void chassis_set_mode(chassis_mode_e *chassis_mode)
 {
-    // ¸ù¾ÝÒ£¿ØÆ÷ÊäÈëÇÐ»»µ×ÅÌÄ£Ê½
+    // ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
     if (RC->rc.s[1] == 0x01)
     {
         *chassis_mode = CHASSIS_VECTOR_revolve;
@@ -124,22 +124,22 @@ void chassis_set_mode(chassis_mode_e *chassis_mode)
 void chassis_set_control(void)
 {
 	
-		int x = 0;                // ³õÊ¼»¯ x ·½ÏòµÄËÙ¶È
-    static int x2 = 0;        // x ·½ÏòµÄÆ½»¬ËÙ¶È£¨Ê¹ÓÃ static ±£³ÖÖµ£¬±ÜÃâÃ¿´Îµ÷ÓÃÊ±ÖØÖÃ£©
-    int y = 0;                // ³õÊ¼»¯ y ·½ÏòµÄËÙ¶È
-    static int y2 = 0;        // y ·½ÏòµÄÆ½»¬ËÙ¶È£¨Ê¹ÓÃ static ±£³ÖÖµ£¬±ÜÃâÃ¿´Îµ÷ÓÃÊ±ÖØÖÃ£©
-    double sin = 0.0;         // ÓÃÓÚ´æ´¢ÕýÏÒÖµ£¨·½ÏòÉÏµÄÕýÏÒÖµ£©
-    double cos = 0.0;         // ÓÃÓÚ´æ´¢ÓàÏÒÖµ£¨·½ÏòÉÏµÄÓàÏÒÖµ£©
-    int pwm1 = 0;             // µç»ú1µÄPWMÐÅºÅ£¨×óÇ°£©
-    int pwm2 = 0;             // µç»ú2µÄPWMÐÅºÅ£¨ÓÒÇ°£©
-    int pwm3 = 0;             // µç»ú3µÄPWMÐÅºÅ£¨×óºó£©
-    int pwm4 = 0;             // µç»ú4µÄPWMÐÅºÅ£¨ÓÒºó£©
-    int pwm0 = 0;             // ÓÃÓÚ¼ÆËã×îÖÕPWMÖµµÄ±äÁ¿
+		int x = 0;                // ï¿½ï¿½Ê¼ï¿½ï¿½ x ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
+    static int x2 = 0;        // x ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ù¶È£ï¿½Ê¹ï¿½ï¿½ static ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½Îµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ã£ï¿½
+    int y = 0;                // ï¿½ï¿½Ê¼ï¿½ï¿½ y ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
+    static int y2 = 0;        // y ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ù¶È£ï¿½Ê¹ï¿½ï¿½ static ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½Îµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ã£ï¿½
+    double sin = 0.0;         // ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½
+    double cos = 0.0;         // ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½
+    int pwm1 = 0;             // ï¿½ï¿½ï¿½1ï¿½ï¿½PWMï¿½ÅºÅ£ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
+    int pwm2 = 0;             // ï¿½ï¿½ï¿½2ï¿½ï¿½PWMï¿½ÅºÅ£ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
+    int pwm3 = 0;             // ï¿½ï¿½ï¿½3ï¿½ï¿½PWMï¿½ÅºÅ£ï¿½ï¿½ï¿½ï¿½
+    int pwm4 = 0;             // ï¿½ï¿½ï¿½4ï¿½ï¿½PWMï¿½ÅºÅ£ï¿½ï¿½Òºï¿½
+    int pwm0 = 0;             // ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PWMÖµï¿½Ä±ï¿½ï¿½ï¿½
 
 
 
 
-    // ¸ù¾ÝÒ£¿ØÆ÷ÊäÈëÉèÖÃÏµÍ³ËÙ¶È
+    // ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½Ù¶ï¿½
    if (chassis_mode == CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW)
     {
         A6020_M1 = c->can1_motors.yaw.ecd - A6020_M;
@@ -152,7 +152,7 @@ void chassis_set_control(void)
         }
 				
 
-        // ½Ç¶ÈºÍËÙ¶ÈµÄPID¿ØÖÆ
+        // ï¿½Ç¶Èºï¿½ï¿½Ù¶Èµï¿½PIDï¿½ï¿½ï¿½ï¿½
         A6020_angle = PID_Calc(&all_motor_pid.pid_follow_angle, A6020_M1, 0);
         A6020_speed = PID_Calc(&all_motor_pid.pid_follow_speed, c->can1_motors.yaw.speed_rpm, A6020_angle);
 				
@@ -163,29 +163,35 @@ void chassis_set_control(void)
             - FlagCheck(RC->key.v & KEY_PRESSED_OFFSET_S) * HIGH_RmeoteSpeed ;
     }
 		
-		 // Í¨¹ý Ramp_function ¶ÔËÙ¶È½øÐÐÆ½»¬´¦Àí£¬±ÜÃâË²Ê±±ä»¯µ¼ÖÂµ×ÅÌ²»ÎÈ¶¨
-    // µÚÒ»¸ö²ÎÊý 66 ÊÇËÙ¶ÈÆ½»¬µÄÊ±¼ä³£Êý£¬x ºÍ y ·Ö±ðÊÇµ±Ç°Ä¿±êËÙ¶È£¬x2 ºÍ y2 ÊÇÉÏ´ÎµÄÆ½»¬Öµ
-    x2 = Ramp_function(66, x, x2, 6, 0);  // ¼ÆËãÆ½»¬ºóµÄ x ·½ÏòËÙ¶È
-    y2 = Ramp_function(66, y, y2, 6, 1);  // ¼ÆËãÆ½»¬ºóµÄ y ·½ÏòËÙ¶È
+		 // Í¨ï¿½ï¿½ Ramp_function ï¿½ï¿½ï¿½Ù¶È½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë²Ê±ï¿½ä»¯ï¿½ï¿½ï¿½Âµï¿½ï¿½Ì²ï¿½ï¿½È¶ï¿½
+    // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 66 ï¿½ï¿½ï¿½Ù¶ï¿½Æ½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä³£ï¿½ï¿½ï¿½ï¿½x ï¿½ï¿½ y ï¿½Ö±ï¿½ï¿½Çµï¿½Ç°Ä¿ï¿½ï¿½ï¿½Ù¶È£ï¿½x2 ï¿½ï¿½ y2 ï¿½ï¿½ï¿½Ï´Îµï¿½Æ½ï¿½ï¿½Öµ
+    x2 = Ramp_function(66, x, x2, 6, 0);  // ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ x ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
+    y2 = Ramp_function(66, y, y2, 6, 1);  // ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ y ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
  /****************************************/
-    // ¼ÆËãµ×ÅÌ·½ÏòÉÏµÄÕýÏÒÖµºÍÓàÏÒÖµ
-    // sin ºÍ cos ·Ö±ð±íÊ¾·½ÏòµÄ±ä»¯Á¿£¬¾ö¶¨µç»úµÄËÙ¶È·ÖÅä
-    sin = y2 / sqrt(x2 * x2 + y2 * y2);  // ¼ÆËã y ·½ÏòµÄ±ÈÀý
-    cos = x2 / sqrt(x2 * x2 + y2 * y2);  // ¼ÆËã x ·½ÏòµÄ±ÈÀý		
-// Ñ¡Ôñ½Ï´óµÄËÙ¶ÈÖµÀ´ÉèÖÃ×î´ó PWM£¬È·±£µç»úÓÐ×ã¹»µÄÊä³ö¹¦ÂÊ
-    if (ABS(y2) > ABS(x2)) {
-        pwm0 = ABS(y2);  // Èç¹û y ·½ÏòËÙ¶È¸ü´ó£¬Ñ¡Ôñ y ·½ÏòµÄ¾ø¶ÔÖµ×÷Îª×î´óËÙ¶È
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+    // sin ï¿½ï¿½ cos ï¿½Ö±ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ä±ä»¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È·ï¿½ï¿½ï¿½
+    float denominator = sqrt(x2 * x2 + y2 * y2);
+    if (denominator < 0.001f) {
+        sin = 0;
+        cos = 0;
     } else {
-        pwm0 = ABS(x2);  // Èç¹û x ·½ÏòËÙ¶È¸ü´ó£¬Ñ¡Ôñ x ·½ÏòµÄ¾ø¶ÔÖµ×÷Îª×î´óËÙ¶È
+        sin = y2 / denominator;
+        cos = x2 / denominator;
+    }
+// Ñ¡ï¿½ï¿½Ï´ï¿½ï¿½ï¿½Ù¶ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PWMï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã¹»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    if (ABS(y2) > ABS(x2)) {
+        pwm0 = ABS(y2);  // ï¿½ï¿½ï¿½ y ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¸ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ y ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Öµï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
+    } else {
+        pwm0 = ABS(x2);  // ï¿½ï¿½ï¿½ x ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¸ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ x ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Öµï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
     }		
 	
 		
-		pwm1 = pwm0 * (sin + cos);  // ×óÇ°µç»ú
-    pwm2 = pwm0 * (sin - cos);  // ÓÒÇ°µç»ú
-    pwm3 = pwm0 * (sin - cos);  // ×óºóµç»ú
-    pwm4 = pwm0 * (sin + cos);  // ÓÒºóµç»ú
+		pwm1 = pwm0 * (sin + cos);  // ï¿½ï¿½Ç°ï¿½ï¿½ï¿½
+    pwm2 = pwm0 * (sin - cos);  // ï¿½ï¿½Ç°ï¿½ï¿½ï¿½
+    pwm3 = pwm0 * (sin - cos);  // ï¿½ï¿½ï¿½ï¿½ï¿½
+    pwm4 = pwm0 * (sin + cos);  // ï¿½Òºï¿½ï¿½ï¿½
 
-    // ½«¼ÆËã³öµÄ PWM ÖµÓ³Éäµ½Ò£¿ØÆ÷µÄËÙ¶ÈÖ¸ÁîÖÐ£¬²¢½øÐÐ×î´óËÙ¶ÈÏÞÖÆ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PWM ÖµÓ³ï¿½äµ½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½Ö¸ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½ï¿½ï¿½
     remoteparam.RemoteLefUpSpeed = pwm1 * MaxGivenSpeed / 660;
     remoteparam.RemoteRigUpSpeed = pwm2 * MaxGivenSpeed / 660;
     remoteparam.RemoteLefDoSpeed = pwm3 * MaxGivenSpeed / 660;
@@ -197,11 +203,11 @@ void chassis_set_control(void)
    }
 
 ///**
-//  * @brief          Ò»½×µÍÍ¨ÂË²¨¼ÆËã
+//  * @brief          Ò»ï¿½×µï¿½Í¨ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½
 //  * @author         RM
-//  * @param[in]      Ò»½×µÍÍ¨ÂË²¨½á¹¹Ìå
-//  * @param[in]      ¼ä¸ôµÄÊ±¼ä£¬µ¥Î» s
-//  * @retval         ·µ»Ø¿Õ
+//  * @param[in]      Ò»ï¿½×µï¿½Í¨ï¿½Ë²ï¿½ï¿½á¹¹ï¿½ï¿½
+//  * @param[in]      ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Î» s
+//  * @retval         ï¿½ï¿½ï¿½Ø¿ï¿½
 //  */
 //void first_order_filter_cali(fp32 input2, fp32 input)
 //{
@@ -217,7 +223,7 @@ void chassis_set_control(void)
  	static float last_vx = 0, last_vy = 0;
 void chassis_set_v(void)
 {
-    // ¸ù¾ÝÄ£Ê½¼ÆËãÃ¿¸öÂÖ×ÓµÄËÙ¶È
+    // ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½Ù¶ï¿½
 
     
 
@@ -253,20 +259,20 @@ void chassis_set_v(void)
 	
 			
 				yaw_angle = -(c->can1_motors.yaw.ecd - A6020_M) / 22.766666;
-        // ¸ù¾ÝÆ«º½½Ç×ª»»ËÙ¶È
+        // ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½Ù¶ï¿½
 		
 	
         vy1 = vy * (float)(cos(yaw_angle / 57.3f)) - vx * (float)(sin(yaw_angle / 57.3f));
       vx1 = vy * (float)(sin(yaw_angle / 57.3f)) + vx * (float)(cos(yaw_angle / 57.3f));
 
 
-// ¼ÆËã×îÖÕËÙ¶È
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
 chassis_set_v1 = vy1 + vx1;
 chassis_set_v2 = -vy1 + vx1;
 chassis_set_v3 = vy1 - vx1;
 chassis_set_v4 = -vy1 - vx1;
 
-// µþ¼ÓÐý×ªËÙ¶È£¨¶¯Ì¬µ÷Õû£©
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ù¶È£ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 chassis_set_v1 += v_revolve;
 chassis_set_v2 += v_revolve;
 chassis_set_v3 += v_revolve;
@@ -292,9 +298,9 @@ chassis_set_v4 += v_revolve;
 
 
 /**
-  * @brief  µ×ÅÌ¿ØÖÆ
-  * @param  ÎÞ
-  * @retval ÎÞ
+  * @brief  ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½
+  * @param  ï¿½ï¿½
+  * @retval ï¿½ï¿½
  **/
 void ChassisController(void)
 {
@@ -309,7 +315,7 @@ void ChassisController(void)
 	if(remoteparam.RemoteRigDoSpeed<-MaxGivenSpeed) remoteparam.RemoteRigDoSpeed =-MaxGivenSpeed;
 		
 	ChassisPidCtr(remoteparam.RemoteLefUpSpeed,-remoteparam.RemoteRigUpSpeed,
-	remoteparam.RemoteLefDoSpeed,-remoteparam.RemoteRigDoSpeed);//Ðè¾ßÌåµ÷ÊÔ·½Ïò
+	remoteparam.RemoteLefDoSpeed,-remoteparam.RemoteRigDoSpeed);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½
 }
 
 void ChassisPidCtr(int16_t LefUpTarspd,int16_t LefDoTarspd,int16_t RigUpTarspd,int16_t RigDoTarspd)
@@ -319,52 +325,59 @@ void ChassisPidCtr(int16_t LefUpTarspd,int16_t LefDoTarspd,int16_t RigUpTarspd,i
 					//Power_Buffer=50.0f;
 			  if (chassis_mode == CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW)
    {
-	      chassisparam.LefUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_right, c->can1_motors.front_left.speed_rpm,LefUpTarspd+A6020_speed  );
-        chassisparam.RigUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_left, c->can1_motors.front_right.speed_rpm, LefDoTarspd+A6020_speed );  
+	      chassisparam.LefUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_right, c->can1_motors.front_right.speed_rpm,LefUpTarspd+A6020_speed  );
+        chassisparam.RigUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_left, c->can1_motors.front_left.speed_rpm, LefDoTarspd+A6020_speed );  
         chassisparam.LefDoFinalOutValue = PID_Calc(&all_motor_pid.pid_back_left,  c->can1_motors.back_left.speed_rpm,RigUpTarspd+A6020_speed  );  
         chassisparam.RigDoFinalOutValue = PID_Calc(&all_motor_pid.pid_back_right, c->can1_motors.back_right.speed_rpm,RigDoTarspd+A6020_speed);  
 	 }
 	  if (chassis_mode == CHASSIS_VECTOR_revolve)
    {
-		 	  chassisparam.LefUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_right, c->can1_motors.front_left.speed_rpm,chassis_set_v1);
-        chassisparam.RigUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_left, c->can1_motors.front_right.speed_rpm,chassis_set_v2);  
+		 	  chassisparam.LefUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_right, c->can1_motors.front_right.speed_rpm,chassis_set_v1);
+        chassisparam.RigUpFinalOutValue = PID_Calc(&all_motor_pid.pid_front_left, c->can1_motors.front_left.speed_rpm,chassis_set_v2);  
         chassisparam.LefDoFinalOutValue = PID_Calc(&all_motor_pid.pid_back_left,  c->can1_motors.back_left.speed_rpm,  chassis_set_v3);  
         chassisparam.RigDoFinalOutValue = PID_Calc(&all_motor_pid.pid_back_right, c->can1_motors.back_right.speed_rpm,chassis_set_v4);  
 
 	 
 	 
 	 }
-// ÅÐ¶ÏµçÔ´»º³å¹¦ÂÊÊÇ·ñÐ¡ÓÚ 50.0f
+// ï¿½Ð¶Ïµï¿½Ô´ï¿½ï¿½ï¿½å¹¦ï¿½ï¿½ï¿½Ç·ï¿½Ð¡ï¿½ï¿½ 50.0f
 if (Power_Buffer < 50.0f) {
-    // ¼ÆËãËÄ¸öµç»ú¿ØÖÆÊä³öµÄ×Ü¾ø¶ÔÖµ£¬ºÏ²¢ÎªÒ»¸öÖµ£¨±íÊ¾µ±Ç°µÄ¹¦ÂÊÐèÇó£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ï²ï¿½ÎªÒ»ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ç°ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     chassisparam.MergeFinalOutValue = 
         ABS(chassisparam.LefUpFinalOutValue) +
         ABS(chassisparam.RigUpFinalOutValue) +
         ABS(chassisparam.LefDoFinalOutValue) +
         ABS(chassisparam.RigDoFinalOutValue);
 
-    // ¼ÆËã¹¦ÂÊÏÞÖÆÖµ£¬`chassisPowerBuffer` µÄÆ½·½Öµ³ËÒÔÔ¤ÉèµÄ¹¦ÂÊÏÞÖÆ²ÎÊý
+    // ï¿½ï¿½ï¿½ã¹¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½`chassisPowerBuffer` ï¿½ï¿½Æ½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ²ï¿½ï¿½ï¿½
     chassisparam.LimtOutValue = 
         Power_Buffer *
         Power_Buffer *
         PowerLimtParam;
 
-    // µ÷ÕûÃ¿¸öµç»úµÄ×îÖÕ¿ØÖÆÖµ£¬¸ù¾Ý¹¦ÂÊÏÞÖÆÖµ½øÐÐËõ·Å
+    // ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¿ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    if (chassisparam.MergeFinalOutValue > 0) {
     chassisparam.LefUpFinalOutValue = 
-        chassisparam.LimtOutValue * chassisparam.LefUpFinalOutValue / chassisparam.MergeFinalOutValue;
+            chassisparam.LimtOutValue * chassisparam.LefUpFinalOutValue / chassisparam.MergeFinalOutValue;
     chassisparam.RigUpFinalOutValue = 
-        chassisparam.LimtOutValue * chassisparam.RigUpFinalOutValue / chassisparam.MergeFinalOutValue;
+            chassisparam.LimtOutValue * chassisparam.RigUpFinalOutValue / chassisparam.MergeFinalOutValue;
     chassisparam.LefDoFinalOutValue = 
-        chassisparam.LimtOutValue * chassisparam.LefDoFinalOutValue / chassisparam.MergeFinalOutValue;
+            chassisparam.LimtOutValue * chassisparam.LefDoFinalOutValue / chassisparam.MergeFinalOutValue;
     chassisparam.RigDoFinalOutValue = 
-        chassisparam.LimtOutValue * chassisparam.RigDoFinalOutValue / chassisparam.MergeFinalOutValue;
+            chassisparam.LimtOutValue * chassisparam.RigDoFinalOutValue / chassisparam.MergeFinalOutValue;
+    } else {
+        chassisparam.LefUpFinalOutValue = 0;
+        chassisparam.RigUpFinalOutValue = 0;
+        chassisparam.LefDoFinalOutValue = 0;
+        chassisparam.RigDoFinalOutValue = 0;
+    }
 	}
 }
 
 /**
-  * @brief  ËÙ¶È»º³åº¯Êý
-  * @param  1¡¢×îÐ¡»º³åÖµ2¡¢Ä¿±êËÙ¶È3¡¢µ±ÏÂËÙ¶È4¡¢»º³åÔöÁ¿5¡¢»º³åÄ£Ê½
-  * @retval ÎÞ
+  * @brief  ï¿½Ù¶È»ï¿½ï¿½åº¯ï¿½ï¿½
+  * @param  1ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Öµ2ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ù¶ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½4ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+  * @retval ï¿½ï¿½
  **/
 int16_t Ramp_function(int16_t delta_Min,int16_t target,int16_t now, int16_t ramp_Coeff, uint8_t mode)
 {

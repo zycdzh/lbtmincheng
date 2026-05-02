@@ -1,13 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 *)",
-      "Bash(python *)",
+      "Bash(python3 -c ' *)",
       "Bash(where python *)",
-      "Bash(cmd /c \"python --version\")",
-      "Bash(xxd)",
-      "Bash(cmake -B build -G \"Unix Makefiles\" -DCMAKE_BUILD_TYPE=Debug)",
-      "Bash(where ninja *)"
+      "Bash(where python3 *)"
     ]
   }
 }

@@ -70,13 +70,13 @@ void friction_set_mode(friction_mode_e *friction_mode) {
 void friction_set_control(friction_mode_e *friction_mode) {
     // 摩擦轮关闭时，设置电机速度为0
     if (*friction_mode == Friction_OFF) {
-        i_2 = PID_Calc(&all_motor_pid.pid_friction_right, f->can2_motors.friction_left.speed_rpm, 0);
-        i_3 = PID_Calc(&all_motor_pid.pid_friction_left, f->can2_motors.friction_right.speed_rpm, 0);
+        i_2 = PID_Calc(&all_motor_pid.pid_friction_right, f->can2_motors.friction_right.speed_rpm, 0);
+        i_3 = PID_Calc(&all_motor_pid.pid_friction_left, f->can2_motors.friction_left.speed_rpm, 0);
     }
     // 摩擦轮开启时，设置电机速度为7000或-7000
     if (*friction_mode == Friction_ON) {
-        i_2 = PID_Calc(&all_motor_pid.pid_friction_right, f->can2_motors.friction_left.speed_rpm, 7000);
-        i_3 = PID_Calc(&all_motor_pid.pid_friction_left, f->can2_motors.friction_right.speed_rpm, -7000);
+        i_2 = PID_Calc(&all_motor_pid.pid_friction_right, f->can2_motors.friction_right.speed_rpm, 7000);
+        i_3 = PID_Calc(&all_motor_pid.pid_friction_left, f->can2_motors.friction_left.speed_rpm, -7000);
     }
 }
 
@@ -110,8 +110,8 @@ void motor_Stalled(const motor_system_t *f, fp32 *speed) {
         }
     }
 
-    // 获取当前时间用于发射间隔计算
-    uint32_t current_time = osKernelGetTickCount() * portTICK_PERIOD_MS;
+    // 获取当前时间用于发射间隔计算（使用tick值，单位ms）
+    uint32_t current_time = xTaskGetTickCount();
 
     // 发射逻辑 - 按住鼠标左键触发发射
     if (friction_mode == Friction_ON && RC_f->mouse.press_l) {
@@ -121,12 +121,15 @@ void motor_Stalled(const motor_system_t *f, fp32 *speed) {
             // 热量越低，间隔越小（发射越快）；热量越高，间隔越大（发射越慢）
             // 基础间隔 = 10000 / cooling_rate ms
             // 当 current_heat 接近 heat_limit 时，interval 会变大以匹配冷却速度
+            if (cooling_rate == 0) {
+                return;
+            }
             fp32 heat_ratio = (fp32)current_heat / heat_limit;
             uint32_t base_interval = 10000 / cooling_rate;
             uint32_t bullet_interval = (uint32_t)(base_interval * (1.0f + heat_ratio * 2.0f));
 
             // 检查距离上次发射是否已经超过间隔时间
-            if (current_time - last_fire_time >= bullet_interval) {
+            if (current_time - last_fire_time >= pdMS_TO_TICKS(bullet_interval)) {
                 // 发射一发
                 pop_up_wheel_ecd = f->can2_motors.pop_up_wheel.ecd_value;
                 int bullet_num = 1;

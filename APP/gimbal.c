@@ -77,7 +77,7 @@ void gimbal_set_control(void) {
         if (RC_g->mouse.y > 5) {
             pitch_flag = pitch_flag - RC_g->mouse.y ;  // ¿ØÖÆ¸©Ñö½Ç¶È
         }
-        if (RC_g->mouse.y < 5) {
+        if (RC_g->mouse.y < -5) {
             pitch_flag = pitch_flag - RC_g->mouse.y ;
         }
 
